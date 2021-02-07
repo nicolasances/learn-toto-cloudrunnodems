@@ -13,16 +13,16 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    #- name: Login to Dockerhub
-    #  run: echo ${{secrets.DOCKERHUB_PSWD}} | docker login -u ${{secrets.DOCKERHUB_USER}} --password-stdin
+    - name: Login to Dockerhub
+      run: echo ${{secrets.DOCKERHUB_PSWD}} | docker login -u ${{secrets.DOCKERHUB_USER}} --password-stdin
 
     - name: Build Docker image
       run: |
         export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
         docker build . -t nicolasances/learn-toto-cloudrunnodems:$PACKAGE_VERSION
  
-    #- name: Push Docker image to Dockerhub 
-    #  run: |
-    #    export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-    #    docker push nicolasances/toto-nodems-expenses:$PACKAGE_VERSION
+    - name: Push Docker image to Dockerhub 
+      run: |
+        export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
+        docker push nicolasances/learn-toto-cloudrunnodems:$PACKAGE_VERSION
     
