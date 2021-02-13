@@ -24,11 +24,20 @@ jobs:
       run: |
         export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
         export PACKAGE_NAME=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-        docker build . -t eu.gcr.io/totoexperiments/$PACKAGE_NAME:$PACKAGE_VERSION
+        docker build . -t eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION
  
     - name: Push Docker image to Dockerhub 
       run: |
         export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
         export PACKAGE_NAME=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-        docker push eu.gcr.io/totoexperiments/$PACKAGE_NAME:$PACKAGE_VERSION
+        docker push eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION
     
+    - name: Login to GCP 
+      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        GCP_PROJECT_ID: ${{ secrets.GCP_PID }}
+        service_account_email: ${{ secrets.GCP_ACC_MAIL }}
+        service_account_key: ${{ secrets.GCP_ACC }}
+    
+    - name: Deploy image
+      run: gcloud run deploy learn --image=eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION --platform=managed --region=europe-west1 --project=${{ secrets.GCP_PID }}
