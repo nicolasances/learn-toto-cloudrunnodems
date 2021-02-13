@@ -40,8 +40,4 @@ jobs:
         export_default_credentials: true
     
     - name: Deploy image
-      uses: google-github-actions/deploy-cloudrun@main
-      with: 
-        image: eu.gcr.io/${{ secrets.GCP_PID}}/$PACKAGE_NAME:$PACKAGE_VERSION
-        service: learn
-        credentials: ${{ secrets.GCR_ACC }}
+      run: gcloud run deploy learn --image eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION
