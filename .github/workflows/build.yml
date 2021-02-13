@@ -20,16 +20,19 @@ jobs:
           username: _json_key
           password: ${{ secrets.GCR_SECRET }}
 
-    - name: Build Docker image
+    - name: Create Environment Variables
       run: |
         export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
         export PACKAGE_NAME=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
+        export "::set-env name=PACKAGE_NAME::$PACKAGE_NAME"
+        export "::set-env name=PACKAGE_VERSION::$PACKAGE_VERSION"
+
+    - name: Build Docker image
+      run: |
         docker build . -t eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION
  
     - name: Push Docker image to Dockerhub 
       run: |
-        export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-        export PACKAGE_NAME=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
         docker push eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION
     
     - name: Setup GCloud 
@@ -41,6 +44,4 @@ jobs:
     
     - name: Deploy image
       run: | 
-        export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-        export PACKAGE_NAME=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
         gcloud run deploy learn --project=${{ secrets.GCP_PID }} --image=eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION --platform=managed --region=europe-west1
