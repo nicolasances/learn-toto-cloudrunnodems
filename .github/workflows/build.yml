@@ -24,16 +24,16 @@ jobs:
       run: |
         export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
         export PACKAGE_NAME=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-        echo "::set-env name=PACKAGE_NAME::$PACKAGE_NAME"
-        echo "::set-env name=PACKAGE_VERSION::$PACKAGE_VERSION"
+        echo "name=PACKAGE_NAME" >> $PACKAGE_NAME
+        echo "name=PACKAGE_VERSION" >> $PACKAGE_VERSION
 
     - name: Build Docker image
       run: |
-        docker build . -t eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION
+        docker build . -t eu.gcr.io/${{ secrets.GCP_PID }}/${{env.PACKAGE_NAME}}:${{env.PACKAGE_VERSION}}
  
     - name: Push Docker image to Dockerhub 
       run: |
-        docker push eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION
+        docker push eu.gcr.io/${{ secrets.GCP_PID }}/${{env.PACKAGE_NAME}}:${{env.PACKAGE_VERSION}}
     
     - name: Setup GCloud 
       uses: google-github-actions/setup-gcloud@master
@@ -44,4 +44,4 @@ jobs:
     
     - name: Deploy image
       run: | 
-        gcloud run deploy learn --project=${{ secrets.GCP_PID }} --image=eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION --platform=managed --region=europe-west1
+        gcloud run deploy learn --project=${{ secrets.GCP_PID }} --image=eu.gcr.io/${{ secrets.GCP_PID }}/${{env.PACKAGE_NAME}}:${{env.PACKAGE_VERSION}} --platform=managed --region=europe-west1
