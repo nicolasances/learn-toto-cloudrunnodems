@@ -33,7 +33,7 @@ jobs:
         docker push eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION
   
     - name: Deploy image
-      run: google-github-actions/deploy-cloudrun@main
+      uses: google-github-actions/deploy-cloudrun@main
       with: 
         image: eu.gcr.io/${{ secrets.GCP_PID}}/$PACKAGE_NAME:$PACKAGE_VERSION
         service: learn
