@@ -24,8 +24,8 @@ jobs:
       run: |
         export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
         export PACKAGE_NAME=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-        export "::set-env name=PACKAGE_NAME::$PACKAGE_NAME"
-        export "::set-env name=PACKAGE_VERSION::$PACKAGE_VERSION"
+        echo "::set-env name=PACKAGE_NAME::$PACKAGE_NAME"
+        echo "::set-env name=PACKAGE_VERSION::$PACKAGE_VERSION"
 
     - name: Build Docker image
       run: |
