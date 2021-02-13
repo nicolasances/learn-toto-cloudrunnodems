@@ -40,4 +40,7 @@ jobs:
         export_default_credentials: true
     
     - name: Deploy image
-      run: gcloud run deploy learn --project=${{ secrets.GCP_PID }} --image=eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION --platform=managed --region=europe-west1
+      run: | 
+        export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
+        export PACKAGE_NAME=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
+        gcloud run deploy learn --project=${{ secrets.GCP_PID }} --image=eu.gcr.io/${{ secrets.GCP_PID }}/$PACKAGE_NAME:$PACKAGE_VERSION --platform=managed --region=europe-west1
