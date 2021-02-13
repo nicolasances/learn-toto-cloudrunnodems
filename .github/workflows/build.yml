@@ -35,7 +35,7 @@ jobs:
     - name: Login to GCP 
       uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
-        GCP_PROJECT_ID: ${{ secrets.GCP_PID }}
+        project_id: ${{ secrets.GCP_PID }}
         service_account_email: ${{ secrets.GCP_ACC_MAIL }}
         service_account_key: ${{ secrets.GCP_ACC }}
     
