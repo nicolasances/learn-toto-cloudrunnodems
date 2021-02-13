@@ -13,8 +13,12 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    - name: Login to Dockerhub
-      run: echo ${{secrets.GCR_SECRET}} 
+    - name: Login to Container Registry
+      uses: docker/login-action@v1
+      with: 
+          registry: eu.gcr.io
+          username: _json_key
+          password: ${{ secrets.GCR_SECRET }}
 
     - name: Build Docker image
       run: |
