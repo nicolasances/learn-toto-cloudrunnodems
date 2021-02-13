@@ -14,17 +14,17 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Login to Dockerhub
-      run: echo ${{secrets.DOCKERHUB_PSWD}} | docker login -u ${{secrets.DOCKERHUB_USER}} --password-stdin
+      run: echo ${{secrets.GCR_SECRET}} | docker login -u _json_key --password-stdin https://eu.gcr.io
 
     - name: Build Docker image
       run: |
         export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
         export PACKAGE_NAME=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-        docker build . -t nicolasances/$PACKAGE_NAME:$PACKAGE_VERSION
+        docker build . -t eu.gcr.io/totoexperiments/$PACKAGE_NAME:$PACKAGE_VERSION
  
     - name: Push Docker image to Dockerhub 
       run: |
         export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
         export PACKAGE_NAME=$(cat package.json | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-        docker push nicolasances/$PACKAGE_NAME:$PACKAGE_VERSION
+        docker push eu.gcr.io/totoexperiments/$PACKAGE_NAME:$PACKAGE_VERSION
     
